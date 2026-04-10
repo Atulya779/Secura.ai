@@ -1,0 +1,4 @@
+project_id = "eiquwmxxkzyiabtkgeex"
+
+[functions.impersonation-check]
+verify_jwt = false

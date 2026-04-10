@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Secura.AI Dark Theme - Cybersecurity Aesthetic */
+    --background: 220 40% 5%;
+    --foreground: 210 100% 95%;
+
+    --card: 220 35% 8%;
+    --card-foreground: 210 100% 95%;
+
+    --popover: 220 35% 8%;
+    --popover-foreground: 210 100% 95%;
+
+    /* Cyber Blue Primary */
+    --primary: 200 100% 50%;
+    --primary-foreground: 220 40% 5%;
+    --primary-glow: 200 100% 60%;
+
+    /* Neon Green Secondary */
+    --secondary: 140 80% 50%;
+    --secondary-foreground: 220 40% 5%;
+    --secondary-glow: 140 80% 60%;
+
+    /* Purple Accent */
+    --accent: 280 80% 60%;
+    --accent-foreground: 210 100% 95%;
+    --accent-glow: 280 80% 70%;
+
+    --muted: 220 30% 15%;
+    --muted-foreground: 210 20% 60%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 30% 18%;
+    --input: 220 30% 18%;
+    --ring: 200 100% 50%;
+
+    --radius: 0.75rem;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(200, 100%, 50%), hsl(280, 80%, 60%));
+    --gradient-secondary: linear-gradient(135deg, hsl(140, 80%, 50%), hsl(200, 100%, 50%));
+    --gradient-hero: linear-gradient(180deg, hsl(220, 40%, 5%), hsl(220, 50%, 10%));
+    
+    /* Shadows & Glows */
+    --shadow-glow-primary: 0 0 40px hsl(200 100% 50% / 0.3);
+    --shadow-glow-secondary: 0 0 40px hsl(140 80% 50% / 0.3);
+    --shadow-card: 0 10px 40px -10px hsl(200 100% 50% / 0.2);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-['Poppins',sans-serif];
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold;
+  }
+}
+
+@layer utilities {
+  .glow-text-primary {
+    text-shadow: 0 0 20px hsl(var(--primary-glow));
+  }
+  
+  .glow-text-secondary {
+    text-shadow: 0 0 20px hsl(var(--secondary-glow));
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .gradient-text {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}

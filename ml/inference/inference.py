@@ -1,0 +1,163 @@
+import hashlib
+from pathlib import Path
+from typing import Dict, Optional, Tuple
+
+import numpy as np
+import torch
+from torch import nn
+from torchvision import models
+
+from ml.inference.preprocess import extract_video_frames, preprocess_audio, preprocess_image
+from ml.utils import get_device
+
+MODEL_DIR = Path(__file__).resolve().parents[1] / "models"
+
+_image_model: Optional[nn.Module] = None
+_audio_model: Optional[nn.Module] = None
+_image_meta: Dict = {}
+_audio_meta: Dict = {}
+_image_status: str = "missing"
+_audio_status: str = "missing"
+
+
+class AudioCNN(nn.Module):
+    def __init__(self, num_classes: int = 2):
+        super().__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(1, 16, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Conv2d(16, 32, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Conv2d(32, 64, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.AdaptiveAvgPool2d((4, 4)),
+        )
+        self.classifier = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(64 * 4 * 4, 128),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(128, num_classes),
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.features(x)
+        return self.classifier(x)
+
+
+def _load_checkpoint(path: Path) -> Dict:
+    if not path.exists():
+        return {}
+    return torch.load(str(path), map_location="cpu")
+
+
+def _load_image_model() -> Optional[nn.Module]:
+    global _image_model, _image_meta, _image_status
+    if _image_model is not None:
+        return _image_model
+
+    checkpoint = _load_checkpoint(MODEL_DIR / "image_model.pth")
+    if not checkpoint:
+        _image_status = "missing"
+        return None
+
+    model = models.resnet18(weights=None)
+    model.fc = nn.Linear(model.fc.in_features, 2)
+    model.load_state_dict(checkpoint.get("model_state", {}))
+    model.eval()
+
+    _image_model = model
+    _image_meta = checkpoint
+    _image_status = "loaded"
+    return _image_model
+
+
+def _load_audio_model() -> Optional[nn.Module]:
+    global _audio_model, _audio_meta, _audio_status
+    if _audio_model is not None:
+        return _audio_model
+
+    checkpoint = _load_checkpoint(MODEL_DIR / "audio_model.pth")
+    if not checkpoint:
+        _audio_status = "missing"
+        return None
+
+    model = AudioCNN()
+    model.load_state_dict(checkpoint.get("model_state", {}))
+    model.eval()
+
+    _audio_model = model
+    _audio_meta = checkpoint
+    _audio_status = "loaded"
+    return _audio_model
+
+
+def _risk_from_logits(logits: torch.Tensor, class_to_idx: Dict) -> float:
+    probs = torch.softmax(logits, dim=1).detach().cpu().numpy()[0]
+    fake_idx = class_to_idx.get("fake", 0)
+    fake_prob = float(probs[fake_idx])
+    return float(np.clip(fake_prob * 100.0, 0, 100))
+
+
+def _demo_risk(file_path: Path) -> float:
+    """Deterministic demo score when model weights are missing."""
+    hasher = hashlib.md5()
+    with file_path.open("rb") as handle:
+        chunk = handle.read(1024 * 1024)
+        hasher.update(chunk)
+    value = int(hasher.hexdigest()[:8], 16)
+    return float(value % 101)
+
+
+def detect_image(file_path: Path) -> Tuple[float, str]:
+    device = get_device()
+    model = _load_image_model()
+    if model is None:
+        return _demo_risk(file_path), _image_status
+
+    model = model.to(device)
+    class_to_idx = _image_meta.get("class_to_idx", {"fake": 0, "real": 1})
+    image_size = int(_image_meta.get("image_size", 224))
+    tensor = preprocess_image(file_path, image_size=image_size).to(device)
+
+    with torch.no_grad():
+        logits = model(tensor)
+    return _risk_from_logits(logits, class_to_idx), _image_status
+
+
+def detect_audio(file_path: Path) -> Tuple[float, str]:
+    device = get_device()
+    model = _load_audio_model()
+    if model is None:
+        return _demo_risk(file_path), _audio_status
+
+    model = model.to(device)
+    class_to_idx = _audio_meta.get("class_to_idx", {"fake": 0, "real": 1})
+    max_len = int(_audio_meta.get("max_len", 256))
+    tensor = preprocess_audio(file_path, max_len=max_len).to(device)
+
+    with torch.no_grad():
+        logits = model(tensor)
+    return _risk_from_logits(logits, class_to_idx), _audio_status
+
+
+def detect_video(file_path: Path, max_frames: int = 10) -> Tuple[float, str]:
+    frames = extract_video_frames(file_path, max_frames=max_frames)
+    if not frames:
+        return _demo_risk(file_path), _image_status
+
+    scores = []
+    status = _image_status
+    for index, frame in enumerate(frames):
+        temp_path = file_path.parent / f"frame_temp_{index}.jpg"
+        cv2 = __import__("cv2")
+        cv2.imwrite(str(temp_path), frame)
+        try:
+            score, status = detect_image(temp_path)
+            scores.append(score)
+        finally:
+            temp_path.unlink(missing_ok=True)
+
+    return float(max(scores)), status

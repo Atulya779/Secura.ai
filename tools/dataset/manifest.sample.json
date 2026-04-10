@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "id": "real-001",
+      "path": "data/real/real-001.jpg",
+      "category": "REAL",
+      "split": "train",
+      "source": "camera",
+      "lighting": "daylight",
+      "device": "iphone",
+      "context": "outdoor",
+      "notes": "Wide daylight scene"
+    },
+    {
+      "id": "real-002",
+      "path": "data/real/real-002.jpg",
+      "category": "REAL",
+      "split": "val",
+      "source": "camera",
+      "lighting": "lowlight",
+      "device": "android",
+      "context": "indoor",
+      "notes": "Low light indoor"
+    },
+    {
+      "id": "ai-safe-001",
+      "path": "data/ai-safe/ai-safe-001.png",
+      "category": "AI_SAFE",
+      "split": "train",
+      "source": "ai-tool",
+      "aiTool": "midjourney",
+      "lighting": "studio",
+      "device": "unknown",
+      "context": "portrait",
+      "notes": "Stylized portrait"
+    },
+    {
+      "id": "ai-safe-002",
+      "path": "data/ai-safe/ai-safe-002.png",
+      "category": "AI_SAFE",
+      "split": "val",
+      "source": "ai-tool",
+      "aiTool": "stable-diffusion",
+      "lighting": "mixed",
+      "device": "unknown",
+      "context": "selfie",
+      "notes": "Trendy AI selfie"
+    },
+    {
+      "id": "deepfake-001",
+      "path": "data/deepfake/deepfake-001.jpg",
+      "category": "DEEPFAKE",
+      "split": "train",
+      "source": "mixed",
+      "lighting": "studio",
+      "device": "dslr",
+      "context": "portrait",
+      "notes": "Manipulated face composite"
+    },
+    {
+      "id": "deepfake-002",
+      "path": "data/deepfake/deepfake-002.jpg",
+      "category": "DEEPFAKE",
+      "split": "test",
+      "source": "mixed",
+      "lighting": "mixed",
+      "device": "webcam",
+      "context": "group",
+      "notes": "Synthetic face swap"
+    }
+  ]
+}

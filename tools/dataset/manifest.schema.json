@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Visual Moderation Dataset Manifest",
+  "type": "object",
+  "required": ["schemaVersion", "items"],
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "path",
+          "category",
+          "split",
+          "lighting",
+          "device",
+          "context"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "path": { "type": "string" },
+          "category": { "type": "string", "enum": ["REAL", "AI_SAFE", "DEEPFAKE"] },
+          "split": { "type": "string", "enum": ["train", "val", "test"] },
+          "source": { "type": "string", "enum": ["camera", "ai-tool", "mixed", "unknown"] },
+          "aiTool": { "type": "string" },
+          "lighting": { "type": "string", "enum": ["daylight", "lowlight", "studio", "mixed", "unknown"] },
+          "device": { "type": "string", "enum": ["iphone", "android", "dslr", "webcam", "unknown"] },
+          "context": { "type": "string", "enum": ["selfie", "portrait", "outdoor", "indoor", "group", "document", "other"] },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}
