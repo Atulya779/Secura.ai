@@ -6,22 +6,17 @@ export const Team = () => {
     {
       name: "Sk Rehan Islam",
       role: "2nd Year BCA Student",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=male1"
+      avatar: "https://cdn-icons-png.flaticon.com/512/924/924915.png"
     },
     {
       name: "Utkarsh Singh",
       role: "2nd Year Btech CSE AI&ML Student",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=male2"
-    },
-    {
-      name: "Jatin Pant",
-      role: "2nd Year Btech CSE CS",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=male3"
+      avatar: "https://cdn-icons-png.flaticon.com/512/4140/4140037.png"
     },
     {
       name: "Atulya Kumar",
       role: "2nd Year BCA",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=male4"
+      avatar: "https://cdn-icons-png.flaticon.com/512/924/924915.png"
     }
   ];
 
@@ -43,7 +38,7 @@ export const Team = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto justify-items-center">
           {team.map((member, index) => (
             <motion.div
               key={member.name}
@@ -57,8 +52,8 @@ export const Team = () => {
                 {/* Avatar */}
                 <div className="mb-4 relative">
                   <div className="w-24 h-24 mx-auto rounded-full overflow-hidden ring-2 ring-primary/20 group-hover:ring-primary/50 transition-all">
-                    <img 
-                      src={member.avatar} 
+                    <img
+                      src={member.avatar}
                       alt={member.name}
                       className="w-full h-full object-cover"
                     />
