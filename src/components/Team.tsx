@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Github, Linkedin, Mail } from "lucide-react";
 
+
 export const Team = () => {
   const team = [
     {
@@ -8,7 +9,7 @@ export const Team = () => {
       role: "2nd Year BCA Student",
       avatar: "https://cdn-icons-png.flaticon.com/512/924/924915.png",
       github: "https://github.com/LEARNER-REHAN",
-      linkedin: "https://www.linkedin.com/in/rehan-islam-07b8b325b/",
+      linkedin: "https://www.linkedin.com/in/sk-rehan-islam-b6a3122b9/",
       mail: "[EMAIL_ADDRESS]"
     },
     {
@@ -16,7 +17,7 @@ export const Team = () => {
       role: "2nd Year Btech CSE AI&ML Student",
       avatar: "https://cdn-icons-png.flaticon.com/512/4140/4140037.png",
       github: "https://github.com/MegatronDevil",
-      linkedin: "https://www.linkedin.com/in/utkarsh-singh-07b8b325b/",
+      linkedin: "https://www.linkedin.com/in/utkarshsingh2005/",
       mail: "[EMAIL_ADDRESS]"
     },
     {
@@ -75,18 +76,32 @@ export const Team = () => {
                   <h3 className="text-lg font-semibold">{member.name}</h3>
                   <p className="text-sm text-muted-foreground">{member.role}</p>
                 </div>
-
                 {/* Social Links */}
                 <div className="flex justify-center gap-3 mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors">
+                  <a
+                    href={member.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+                  >
                     <Github className="w-4 h-4" />
-                  </button>
-                  <button className="p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors">
+                  </a>
+
+                  <a
+                    href={member.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+                  >
                     <Linkedin className="w-4 h-4" />
-                  </button>
-                  <button className="p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors">
+                  </a>
+
+                  <a
+                    href={`mailto:${member.mail}`}
+                    className="p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+                  >
                     <Mail className="w-4 h-4" />
-                  </button>
+                  </a>
                 </div>
               </div>
             </motion.div>
