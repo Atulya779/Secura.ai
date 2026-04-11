@@ -6,17 +6,26 @@ export const Team = () => {
     {
       name: "Sk Rehan Islam",
       role: "2nd Year BCA Student",
-      avatar: "https://cdn-icons-png.flaticon.com/512/924/924915.png"
+      avatar: "https://cdn-icons-png.flaticon.com/512/924/924915.png",
+      github: "https://github.com/LEARNER-REHAN",
+      linkedin: "https://www.linkedin.com/in/rehan-islam-07b8b325b/",
+      mail: "[EMAIL_ADDRESS]"
     },
     {
       name: "Utkarsh Singh",
       role: "2nd Year Btech CSE AI&ML Student",
-      avatar: "https://cdn-icons-png.flaticon.com/512/4140/4140037.png"
+      avatar: "https://cdn-icons-png.flaticon.com/512/4140/4140037.png",
+      github: "https://github.com/MegatronDevil",
+      linkedin: "https://www.linkedin.com/in/utkarsh-singh-07b8b325b/",
+      mail: "[EMAIL_ADDRESS]"
     },
     {
       name: "Atulya Kumar",
-      role: "2nd Year BCA",
-      avatar: "https://cdn-icons-png.flaticon.com/512/924/924915.png"
+      role: "2nd Year BCA Student",
+      avatar: "https://cdn-icons-png.flaticon.com/512/924/924915.png",
+      github: "https://github.com/Atulya779",
+      linkedin: "https://www.linkedin.com/in/atulya-kumar-03471622b/",
+      mail: "atulyakumar779@gmail.com"
     }
   ];
 
