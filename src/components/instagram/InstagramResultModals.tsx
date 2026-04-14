@@ -5,7 +5,7 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { AlertTriangle, CheckCircle2, Shield } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Shield, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { VisualModerationResult } from "@/utils/moderationTypes";
 

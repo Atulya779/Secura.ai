@@ -1,4 +1,5 @@
 import React, { Suspense } from 'react';
+import ErrorBoundary from './ErrorBoundary';
 const Spline = React.lazy(() => import('@splinetool/react-spline'));
 
 interface SplineSceneProps {
@@ -12,9 +13,11 @@ export const SplineScene = ({
 }: SplineSceneProps) => {
   return (
     <div className={`w-full h-full min-h-[400px] flex items-center justify-center ${className}`}>
-      <Suspense fallback={<div className="w-full h-full bg-slate-900 animate-pulse" />}>
-        <Spline scene={scene} />
-      </Suspense>
+      <ErrorBoundary fallback={<div className="w-full h-full bg-slate-900/20 backdrop-blur-sm" />}>
+        <Suspense fallback={<div className="w-full h-full bg-slate-900 animate-pulse" />}>
+          <Spline scene={scene} />
+        </Suspense>
+      </ErrorBoundary>
     </div>
   );
 };

@@ -40,7 +40,7 @@ export const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
         onOpenChange(false);
         navigate("/dashboard");
       } else {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -50,17 +50,32 @@ export const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
 
         if (error) throw error;
 
-        toast({
-          title: "Account created!",
-          description: "You have successfully signed up.",
-        });
-        onOpenChange(false);
-        navigate("/dashboard");
+        // If session is null but user is created, it means email confirmation is required
+        if (data.user && !data.session) {
+          toast({
+            title: "Verification required",
+            description: "Please check your inbox and confirm your email address before logging in.",
+          });
+          setIsLogin(true);
+        } else {
+          toast({
+            title: "Account created!",
+            description: "You have successfully signed up. Welcome to Secura.AI!",
+          });
+          onOpenChange(false);
+          navigate("/dashboard");
+        }
       }
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Something went wrong.";
+    } catch (error: any) {
+      let message = error.message || "Something went wrong.";
+      
+      // Provide more helpful message for common auth errors
+      if (message.includes("Email not confirmed")) {
+        message = "Please confirm your email address before logging in. Check your inbox (and spam folder) for the verification link.";
+      }
+
       toast({
-        title: "Error",
+        title: "Auth Error",
         description: message,
         variant: "destructive",
       });
