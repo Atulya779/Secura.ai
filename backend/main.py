@@ -82,21 +82,25 @@ async def verify_upload(file: UploadFile = File(...)):
 
         file_type = _detect_file_type(file.filename or "")
         if file_type == "image":
-            risk_score, model_status = detect_image(temp_path)
+            risk_score, model_status, reason_internal = detect_image(temp_path)
         elif file_type == "video":
-            risk_score, model_status = detect_video(temp_path)
+            risk_score, model_status, reason_internal = detect_video(temp_path)
         elif file_type == "audio":
-            risk_score, model_status = detect_audio(temp_path)
+            risk_score, model_status, reason_internal = detect_audio(temp_path)
         else:
             raise HTTPException(status_code=400, detail="Invalid file type")
 
-        media_type, decision, reason = _decision_from_risk(risk_score)
-        reason = _append_demo_reason(reason, model_status)
+        media_type, decision, base_reason = _decision_from_risk(risk_score)
+        
+        # Merge internal reason (from Gemini or local model) with the base risk-based reason
+        final_reason = f"{base_reason}. {reason_internal}"
+        final_reason = _append_demo_reason(final_reason, model_status)
+        
         response = {
             "type": media_type,
             "risk_score": round(float(risk_score), 2),
             "decision": decision,
-            "reason": reason,
+            "reason": final_reason,
             "model_status": model_status,
         }
         print(f"[result] {response}")

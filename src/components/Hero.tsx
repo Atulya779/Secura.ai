@@ -2,8 +2,8 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Shield, Sparkles } from "lucide-react";
-import heroBg from "@/assets/hero-bg.jpg";
 import { AuthDialog } from "@/components/AuthDialog";
+import { SplineScene } from "@/components/SplineScene";
 
 export const Hero = () => {
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
@@ -16,16 +16,16 @@ export const Hero = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />
-        <img 
-          src={heroBg} 
-          alt="AI Neural Network" 
-          className="w-full h-full object-cover opacity-30"
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.1),transparent_50%)]" />
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-950">
+      {/* 3D Spline Background */}
+      <div className="absolute inset-0 z-0 opacity-60">
+        <SplineScene className="w-full h-full scale-110 md:scale-100" />
+      </div>
+
+      {/* Overlays for depth */}
+      <div className="absolute inset-0 z-[1] pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/20 via-slate-950/40 to-slate-950" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(120,119,198,0.15),transparent_50%)]" />
       </div>
 
       {/* Content */}

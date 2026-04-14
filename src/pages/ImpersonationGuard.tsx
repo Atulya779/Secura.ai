@@ -10,6 +10,7 @@ import { InstagramBlockedModal, InstagramSuccessModal } from "@/components/insta
 import { VisualModerationResult } from "@/utils/moderationTypes";
 import { submitModerationReport } from "@/utils/moderationReport";
 import { useToast } from "@/hooks/use-toast";
+import { SplineScene } from "@/components/SplineScene";
 
 type InstagramView = "login" | "signup" | "home" | "create";
 
@@ -131,7 +132,14 @@ export default function ImpersonationGuard() {
   if (!authUser) return null;
 
   return (
-    <>
+    <div className="relative min-h-screen bg-slate-900 overflow-hidden">
+      {/* 3D Background */}
+      <div className="absolute inset-0 z-0 opacity-40">
+        <SplineScene scene="https://prod.spline.design/kZ9s743ubmSre0su/scene.splinecode" />
+      </div>
+
+      {/* Main Content Overlay */}
+      <div className="relative z-10 min-h-screen">
       {/* Instagram Clone Views */}
       {view === "login" && (
         <InstagramLogin 
@@ -182,6 +190,7 @@ export default function ImpersonationGuard() {
         result={successResult}
         onReport={(feedback) => successResult && handleReport(successResult, feedback)}
       />
-    </>
+      </div>
+    </div>
   );
 }

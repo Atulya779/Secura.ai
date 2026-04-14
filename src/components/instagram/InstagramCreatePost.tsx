@@ -59,32 +59,53 @@ export default function InstagramCreatePost({
 
       const formData = new FormData();
       formData.append("file", compressedFile);
-      const { data, error } = await supabase.functions.invoke("impersonation-check", {
-        body: formData,
-      });
-
-      if (error) throw error;
-
-      const result = data as VisualModerationResult;
-
-      if (result.decision === "BLOCK") {
-        onBlocked(result);
-      } else {
-        // Pass the image preview, caption, and moderation metadata
-        onSuccess(imagePreview, caption, result);
+      
+      // Attempt to use local high-precision backend if available
+      let result: VisualModerationResult;
+      try {
+        const localResponse = await fetch("http://localhost:8000/verify-upload", {
+          method: "POST",
+          body: formData,
+        });
+        
+        if (!localResponse.ok) throw new Error("Local backend unavailable");
+        
+        const localData = await localResponse.json();
+        result = {
+          category: localData.type === "deepfake" ? "DEEPFAKE" : localData.type === "ai" ? "AI_SAFE" : "REAL",
+          decision: localData.decision.toUpperCase() as VisualModerationResult["decision"],
+          confidence: localData.risk_score,
+          label: localData.type === "deepfake" ? "Deepfake Detected" : "Verified Real",
+          explanation: localData.reason,
+          evidence: [localData.reason],
+          needsReview: localData.risk_score > 50,
+          model: { source: "remote", version: "gemini-1.5-flash" },
+          analysisType: "image"
+        };
+      } catch (err) {
+        console.warn("Local backend check failed, falling back to Supabase:", err);
+        const { data, error } = await supabase.functions.invoke("impersonation-check", {
+          body: formData,
+        });
+        if (error) throw error;
+        result = data as VisualModerationResult;
       }
 
-      if (result.needsReview) {
+      if (result.decision === "BLOCK") {
         toast({
-          title: "Review recommended",
-          description: "This upload has low confidence and may need human review.",
+          title: "Content Blocked",
+          description: "This photo was identified as a deepfake or inappropriate.",
+          variant: "destructive",
         });
+        onBlocked(result);
+      } else {
+        onSuccess(imagePreview, caption, result);
       }
     } catch (error) {
       console.error("Analysis error:", error);
       toast({
-        title: "Something went wrong",
-        description: "Please try again later.",
+        title: "Analysis Failed",
+        description: "Could not verify content. Please check your connection.",
         variant: "destructive",
       });
     } finally {
